@@ -250,7 +250,7 @@ PrefabInstance:
       objectReference: {fileID: 2100000, guid: cb134a8f1801de140afc849b6c1d8e21, type: 2}
     - target: {fileID: 2590402263182253977, guid: bfc8f46450db0cf48906c061966440c6, type: 3}
       propertyPath: vida
-      value: 0
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 7229518834745117551, guid: bfc8f46450db0cf48906c061966440c6, type: 3}
       propertyPath: m_Name
