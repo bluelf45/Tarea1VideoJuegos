@@ -46,7 +46,6 @@ public class Persona : MonoBehaviour
         vida = (vida > 100f) ? 100f : vida;
     }
 
-    // Start is called before the first frame update
     void Start()
     {
         textoVida = this.gameObject.transform.Find("FloatingText").gameObject;
@@ -68,7 +67,6 @@ public class Persona : MonoBehaviour
         }
     }
 
-    // Update is called once per frame
     void Update()
     {
         if (doctorCurando != null)

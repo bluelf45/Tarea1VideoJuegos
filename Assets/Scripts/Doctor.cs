@@ -2,9 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-enum EstadoDoctor
+public enum EstadoDoctor
 {
     Idle,
+    Muerto,
     Huir,
     Curar
 }
@@ -12,10 +13,11 @@ enum EstadoDoctor
 public class Doctor : MonoBehaviour
 {
     private float vel = 4f;
-    [SerializeField] private EstadoDoctor estado = EstadoDoctor.Idle;
+    public EstadoDoctor estado = EstadoDoctor.Idle;
 
     public GameObject personaSeleccionada;
     private GameObject[] entesPersiguiendo = new GameObject[0];
+    // Se utiliza el ente mas cercano para huir exclusivamente de el en caso de que hayan mas de 1 ente persiguiendo
     private GameObject enteMasCercano;
 
     void EncontrarPersonaPocaVida()
@@ -32,21 +34,25 @@ public class Doctor : MonoBehaviour
             {
                 continue;
             }
-            bool siendoCurado = false;
+            bool siendoCurada = false;
 
+            // Revisa si es que la persona a curar ya esta siendo curada, de ser así buscar otra
             foreach (var doctor in doctores)
             {
-                if (doctor != this.gameObject && doctor.GetComponent<Doctor>().personaSeleccionada == obj)
+                var varsDoctor = doctor.GetComponent<Doctor>();
+                if (doctor != this.gameObject && varsDoctor.estado != EstadoDoctor.Muerto && varsDoctor.personaSeleccionada == obj)
                 {
-                    siendoCurado = true;
+                    siendoCurada = true;
                 }
             }
 
-            if (!siendoCurado)
+            if (!siendoCurada)
             {
+                // Se transforma a int para luego comparar solo los enteros. Si se comparan decimales, el caso de iguales ocurrirá muy poco
                 int vida = (int)Mathf.Round(obj.GetComponent<Persona>().vida);
                 float vidaDist = Vector3.Distance(obj.transform.position, transform.position);
 
+                // Se va a la persona con menor vida, en caso de ser iguales se va a la mas cercana
                 if (vida < minVida || (vida == minVida && vidaDist < minVidaDist))
                 {
                     estado = EstadoDoctor.Curar;
@@ -100,62 +106,63 @@ public class Doctor : MonoBehaviour
     {
         if (other.gameObject.tag == "Ente")
         {
-            Destroy(this.gameObject);
+            estado = EstadoDoctor.Muerto;
         }
     }
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
     void Update()
     {
-        DetectarEntes();
-
-        if (estado == EstadoDoctor.Idle)
+        if (estado == EstadoDoctor.Muerto)
         {
-            EncontrarPersonaPocaVida();
+            transform.rotation = Quaternion.Euler(new Vector3(0, 0, 90));
+            transform.position = new Vector3(transform.position.x, 0.5f, transform.position.z);
         }
-        // Revisa cuando Ente para de perseguir
-        else if (entesPersiguiendo.Length > 0)
+        else
         {
-            bool noPersiguiendo = false;
+            DetectarEntes();
 
-            foreach (var obj in entesPersiguiendo)
+            if (estado == EstadoDoctor.Idle)
             {
-                var varsEnte = obj.GetComponent<Ente>();
-                if (varsEnte.estado != EstadoEnte.Hunt || varsEnte.doctorSeleccionado != this.gameObject)
+                EncontrarPersonaPocaVida();
+            }
+            // Revisa cuando Ente para de perseguir
+            else if (entesPersiguiendo.Length > 0)
+            {
+                bool noPersiguiendo = false;
+
+                foreach (var obj in entesPersiguiendo)
                 {
-                    noPersiguiendo = true;
-                    break;
+                    var varsEnte = obj.GetComponent<Ente>();
+                    if (varsEnte.estado != EstadoEnte.Hunt || varsEnte.doctorSeleccionado != this.gameObject)
+                    {
+                        noPersiguiendo = true;
+                        break;
+                    }
+                }
+
+                if (noPersiguiendo)
+                {
+                    estado = EstadoDoctor.Idle;
+                    entesPersiguiendo = new GameObject[0];
                 }
             }
 
-            if (noPersiguiendo)
+            if (estado == EstadoDoctor.Curar)
             {
-                estado = EstadoDoctor.Idle;
-                entesPersiguiendo = new GameObject[0];
+                if (personaSeleccionada.GetComponent<Persona>().vida >= 100f || personaSeleccionada.GetComponent<Persona>().estado == EstadoPersona.Muerta)
+                {
+                    estado = EstadoDoctor.Idle;
+                }
+                Vector3 nuevaPos = personaSeleccionada.transform.position;
+                transform.position = Vector3.MoveTowards(transform.position, new Vector3(nuevaPos.x, transform.position.y, nuevaPos.z), vel * Time.deltaTime);
             }
-        }
-
-        if (estado == EstadoDoctor.Curar)
-        {
-            if (personaSeleccionada.GetComponent<Persona>().estado == EstadoPersona.Muerta || personaSeleccionada.GetComponent<Persona>().vida >= 100f)
+            else if (estado == EstadoDoctor.Huir)
             {
-                estado = EstadoDoctor.Idle;
-            }
-            Vector3 nuevaPos = personaSeleccionada.transform.position;
-            transform.position = Vector3.MoveTowards(transform.position, new Vector3(nuevaPos.x, transform.position.y, nuevaPos.z), vel * Time.deltaTime);
-        }
-        else if (estado == EstadoDoctor.Huir)
-        {
-            EnteMasCercano();
+                EnteMasCercano();
 
-            Vector3 nuevaPos = enteMasCercano.transform.position;
-            transform.position = Vector3.MoveTowards(transform.position, new Vector3(nuevaPos.x, transform.position.y, nuevaPos.z), -1 * vel * Time.deltaTime);
+                Vector3 nuevaPos = enteMasCercano.transform.position;
+                transform.position = Vector3.MoveTowards(transform.position, new Vector3(nuevaPos.x, transform.position.y, nuevaPos.z), -1 * vel * Time.deltaTime);
+            }
         }
     }
 }

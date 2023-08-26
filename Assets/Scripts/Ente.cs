@@ -15,8 +15,8 @@ public class Ente : MonoBehaviour
     public GameObject doctorSeleccionado;
 
     private float vel = 2f;
-    private float rangeDetect = 4f;
-    private float rangeChase = 6f;
+    private float rangeDetect = 5f;
+    private float rangeChase = 7f;
     private float[] rangeMov = { 12, 9 };
     private float randomX;
     private float randomZ;
@@ -34,7 +34,7 @@ public class Ente : MonoBehaviour
         {
             foreach (var obj in doctores)
             {
-                if (obj.tag == "Doctor")
+                if (obj.tag == "Doctor" && obj.gameObject.GetComponent<Doctor>().estado != EstadoDoctor.Muerto)
                 {
                     cantidadDoc++;
                     estado = EstadoEnte.Hunt;
@@ -63,15 +63,9 @@ public class Ente : MonoBehaviour
         }
     }
 
-    // Start is called before the first frame update
-    void Start()
-    {
-    
-    }
-
-    // Update is called once per frame
     void Update()
     {
+        // Cuando el ente se salga del rango especificado
         if (Mathf.Abs(transform.position.x) >= rangeMov[0] || Mathf.Abs(transform.position.z) >= rangeMov[1])
         {
             estado = EstadoEnte.Comeback;
