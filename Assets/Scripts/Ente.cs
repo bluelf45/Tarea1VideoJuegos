@@ -57,7 +57,7 @@ public class Ente : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.tag == "Doctor")
+        if (other.gameObject.tag == "Doctor" && estado == EstadoEnte.Hunt)
         {
             estado = EstadoEnte.Idle;
         }

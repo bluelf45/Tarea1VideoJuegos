@@ -104,7 +104,7 @@ public class Doctor : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.tag == "Ente")
+        if (other.gameObject.tag == "Ente" && other.gameObject.GetComponent<Ente>().estado == EstadoEnte.Hunt)
         {
             estado = EstadoDoctor.Muerto;
         }
