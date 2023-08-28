@@ -14,7 +14,7 @@ public class Ente : MonoBehaviour
     public EstadoEnte estado = EstadoEnte.Idle;
     public GameObject doctorSeleccionado;
 
-    private float vel = 2f;
+    private float vel = 3f;
     private float rangeDetect = 5f;
     private float rangeChase = 7f;
     private float[] rangeMov = { 12, 9 };
@@ -69,8 +69,8 @@ public class Ente : MonoBehaviour
         if (Mathf.Abs(transform.position.x) >= rangeMov[0] || Mathf.Abs(transform.position.z) >= rangeMov[1])
         {
             estado = EstadoEnte.Comeback;
-            randomX = Random.Range(-6f, 6f);
-            randomZ = Random.Range(-4.5f, 4.5f);
+            randomX = Random.Range(-4f, 4f);
+            randomZ = Random.Range(-3f, 3f);
         }
 
         if (estado == EstadoEnte.Idle)

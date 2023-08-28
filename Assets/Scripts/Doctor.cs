@@ -12,7 +12,7 @@ public enum EstadoDoctor
 
 public class Doctor : MonoBehaviour
 {
-    private float vel = 4f;
+    public float vel = 4f;
     public EstadoDoctor estado = EstadoDoctor.Idle;
 
     public GameObject personaSeleccionada;
@@ -106,6 +106,7 @@ public class Doctor : MonoBehaviour
     {
         if (other.gameObject.tag == "Ente" && other.gameObject.GetComponent<Ente>().estado == EstadoEnte.Hunt)
         {
+            Debug.Log("Trigger Doctor");
             estado = EstadoDoctor.Muerto;
         }
     }

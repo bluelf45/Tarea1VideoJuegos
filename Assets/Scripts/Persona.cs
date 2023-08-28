@@ -46,6 +46,33 @@ public class Persona : MonoBehaviour
         vida = (vida > 100f) ? 100f : vida;
     }
 
+    void StunEnte()
+    {
+        GameObject[] entes = GameObject.FindGameObjectsWithTag("Ente");
+        GameObject enteSeleccionado = null;
+
+        float minDistancia = float.PositiveInfinity;
+
+        foreach (var obj in entes)
+        {
+            if (obj.GetComponent<Ente>().estado != EstadoEnte.Comeback)
+            {
+                float distancia = (transform.position - obj.transform.position).sqrMagnitude;
+
+                if (distancia < minDistancia)
+                {
+                    enteSeleccionado = obj.gameObject;
+                    minDistancia = distancia;
+                }
+            }
+        }
+
+        if (enteSeleccionado != null)
+        {
+            enteSeleccionado.GetComponent<Ente>().estado = EstadoEnte.Comeback;
+        }
+    }
+
     void Start()
     {
         textoVida = this.gameObject.transform.Find("FloatingText").gameObject;
@@ -69,6 +96,11 @@ public class Persona : MonoBehaviour
 
     void Update()
     {
+        if (vida <= 20)
+        {
+            StunEnte();
+        }
+
         if (doctorCurando != null)
         {
             Curar();
