@@ -120,3 +120,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   estado: 0
   doctorSeleccionado: {fileID: 0}
+  WanderHuntMaterial: {fileID: 2100000, guid: 3accf2c18865e7e4bad7cba2982611ae, type: 2}
+  comebackMaterial: {fileID: 2100000, guid: 5d2d61cac88ce09428f7d7bf4a7ca66f, type: 2}

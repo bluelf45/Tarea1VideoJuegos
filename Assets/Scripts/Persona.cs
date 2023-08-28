@@ -13,12 +13,12 @@ public class Persona : MonoBehaviour
     public float vida = 100f;
     public EstadoPersona estado = EstadoPersona.Viva;
 
-    private float perdidaVidaVel = 2f;
-    private float curarVel = 4f;
+    private float perdidaVidaVel = 3f;
+    private float curarVel = 5f;
 
     private GameObject textoVida;
-
     private GameObject doctorCurando;
+    private GameObject enteStuneado;
 
     void ActualizarTexto()
     {
@@ -55,21 +55,19 @@ public class Persona : MonoBehaviour
 
         foreach (var obj in entes)
         {
-            if (obj.GetComponent<Ente>().estado != EstadoEnte.Comeback)
-            {
-                float distancia = (transform.position - obj.transform.position).sqrMagnitude;
+            float distancia = (transform.position - obj.transform.position).sqrMagnitude;
 
-                if (distancia < minDistancia)
-                {
-                    enteSeleccionado = obj.gameObject;
-                    minDistancia = distancia;
-                }
+            if (distancia < minDistancia)
+            {
+                enteSeleccionado = obj.gameObject;
+                minDistancia = distancia;
             }
         }
 
-        if (enteSeleccionado != null)
+        if (enteSeleccionado != enteStuneado)
         {
             enteSeleccionado.GetComponent<Ente>().SetToComeback();
+            enteStuneado = enteSeleccionado;
         }
     }
 
@@ -96,18 +94,21 @@ public class Persona : MonoBehaviour
 
     void Update()
     {
-        if (vida <= 20)
+        if (estado != EstadoPersona.Muerta)
         {
-            StunEnte();
-        }
+            if (vida <= 20)
+            {
+                StunEnte();
+            }
 
-        if (doctorCurando != null)
-        {
-            Curar();
-        }
-        else
-        {
-            QuitarVida();
+            if (doctorCurando != null)
+            {
+                Curar();
+            }
+            else
+            {
+                QuitarVida();
+            }
         }
         
         ActualizarTexto();

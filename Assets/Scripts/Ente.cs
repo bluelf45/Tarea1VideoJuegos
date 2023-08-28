@@ -13,6 +13,8 @@ public class Ente : MonoBehaviour
 {
     public EstadoEnte estado = EstadoEnte.Wander;
     public GameObject doctorSeleccionado;
+    public Material WanderHuntMaterial;
+    public Material comebackMaterial;
 
     private float velWander = 3f;
     private float velHunt = 4.75f;
@@ -69,6 +71,7 @@ public class Ente : MonoBehaviour
     public void SetToComeback()
     {
         estado = EstadoEnte.Comeback;
+        this.gameObject.GetComponent<Renderer>().material = comebackMaterial;
         randomX = Random.Range(-radiusRangeComeback[0], radiusRangeComeback[0]);
         randomZ = Random.Range(-radiusRangeComeback[1], radiusRangeComeback[1]);
     }
@@ -110,6 +113,7 @@ public class Ente : MonoBehaviour
         {
             if (transform.position.x == randomX && transform.position.z == randomZ)
             {
+                this.gameObject.GetComponent<Renderer>().material = WanderHuntMaterial;
                 estado = EstadoEnte.Wander;
             }
             else
