@@ -106,7 +106,6 @@ public class Doctor : MonoBehaviour
     {
         if (other.gameObject.tag == "Ente" && other.gameObject.GetComponent<Ente>().estado == EstadoEnte.Hunt)
         {
-            Debug.Log("Trigger Doctor");
             estado = EstadoDoctor.Muerto;
         }
     }

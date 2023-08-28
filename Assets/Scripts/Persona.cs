@@ -69,7 +69,7 @@ public class Persona : MonoBehaviour
 
         if (enteSeleccionado != null)
         {
-            enteSeleccionado.GetComponent<Ente>().estado = EstadoEnte.Comeback;
+            enteSeleccionado.GetComponent<Ente>().SetToComeback();
         }
     }
 

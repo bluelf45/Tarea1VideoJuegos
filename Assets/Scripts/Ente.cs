@@ -4,22 +4,25 @@ using UnityEngine;
 
 public enum EstadoEnte
 {
-    Idle,
+    Wander,
     Hunt,
     Comeback
 }
 
 public class Ente : MonoBehaviour
 {
-    public EstadoEnte estado = EstadoEnte.Idle;
+    public EstadoEnte estado = EstadoEnte.Wander;
     public GameObject doctorSeleccionado;
 
-    private float vel = 3f;
+    private float velWander = 3f;
+    private float velHunt = 4.75f;
     private float rangeDetect = 5f;
     private float rangeChase = 7f;
     private float[] rangeMov = { 12, 9 };
     private float randomX;
     private float randomZ;
+    private float[] radiusRangeComeback = { 4, 3 };
+    private float[] radiusRangeWander = { 9f, 6f };
 
     void EncontrarDoctorCercano()
     {
@@ -51,7 +54,7 @@ public class Ente : MonoBehaviour
         
         if (cantidadDoc == 0)
         {
-            estado = EstadoEnte.Idle;
+            estado = EstadoEnte.Wander;
         }
     }
 
@@ -59,8 +62,21 @@ public class Ente : MonoBehaviour
     {
         if (other.gameObject.tag == "Doctor" && estado == EstadoEnte.Hunt)
         {
-            estado = EstadoEnte.Idle;
+            estado = EstadoEnte.Wander;
         }
+    }
+
+    public void SetToComeback()
+    {
+        estado = EstadoEnte.Comeback;
+        randomX = Random.Range(-radiusRangeComeback[0], radiusRangeComeback[0]);
+        randomZ = Random.Range(-radiusRangeComeback[1], radiusRangeComeback[1]);
+    }
+
+    void Start()
+    {
+        randomX = Random.Range(-radiusRangeWander[0], radiusRangeWander[0]);
+        randomZ = Random.Range(-radiusRangeWander[1], radiusRangeWander[1]);
     }
 
     void Update()
@@ -68,31 +84,37 @@ public class Ente : MonoBehaviour
         // Cuando el ente se salga del rango especificado
         if (Mathf.Abs(transform.position.x) >= rangeMov[0] || Mathf.Abs(transform.position.z) >= rangeMov[1])
         {
-            estado = EstadoEnte.Comeback;
-            randomX = Random.Range(-4f, 4f);
-            randomZ = Random.Range(-3f, 3f);
+            SetToComeback();
         }
 
-        if (estado == EstadoEnte.Idle)
+        if (estado == EstadoEnte.Wander)
         {
-            EncontrarDoctorCercano(); 
+            if (transform.position.x == randomX && transform.position.z == randomZ)
+            {
+                randomX = Random.Range(-radiusRangeWander[0], radiusRangeWander[0]);
+                randomZ = Random.Range(-radiusRangeWander[1], radiusRangeWander[1]);
+            }
+
+            EncontrarDoctorCercano();
+
+            transform.position = Vector3.MoveTowards(transform.position, new Vector3(randomX, transform.position.y, randomZ), velWander * Time.deltaTime);
         }
         else if (estado == EstadoEnte.Hunt)
         {
             EncontrarDoctorCercano();
 
             Vector3 nuevaPos = doctorSeleccionado.transform.position;
-            transform.position = Vector3.MoveTowards(transform.position, new Vector3(nuevaPos.x, transform.position.y, nuevaPos.z), vel * Time.deltaTime);
+            transform.position = Vector3.MoveTowards(transform.position, new Vector3(nuevaPos.x, transform.position.y, nuevaPos.z), velHunt * Time.deltaTime);
         }
         else if (estado == EstadoEnte.Comeback)
         {
             if (transform.position.x == randomX && transform.position.z == randomZ)
             {
-                estado = EstadoEnte.Idle;
+                estado = EstadoEnte.Wander;
             }
             else
             {
-                transform.position = Vector3.MoveTowards(transform.position, new Vector3(randomX, transform.position.y, randomZ), vel * Time.deltaTime);
+                transform.position = Vector3.MoveTowards(transform.position, new Vector3(randomX, transform.position.y, randomZ), velWander * Time.deltaTime);
             }
         }
     }
