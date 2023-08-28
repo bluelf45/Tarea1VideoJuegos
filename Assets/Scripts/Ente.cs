@@ -60,7 +60,7 @@ public class Ente : MonoBehaviour
         }
     }
 
-    private void OnTriggerEnter(Collider other)
+    private void OnTriggerStay(Collider other)
     {
         if (other.gameObject.tag == "Doctor" && estado == EstadoEnte.Hunt)
         {

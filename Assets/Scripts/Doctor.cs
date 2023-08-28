@@ -102,7 +102,7 @@ public class Doctor : MonoBehaviour
         }
     }
 
-    private void OnTriggerEnter(Collider other)
+    private void OnTriggerStay(Collider other)
     {
         if (other.gameObject.tag == "Ente" && other.gameObject.GetComponent<Ente>().estado == EstadoEnte.Hunt)
         {
